@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "825161132628",
+    "firebase_url": "https://ivd-1-f15ba-default-rtdb.firebaseio.com",
+    "project_id": "ivd-1-f15ba",
+    "storage_bucket": "ivd-1-f15ba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825161132628:android:526dfca5adf53a5cb71bc1",
+        "android_client_info": {
+          "package_name": "com.example.obsalinetech"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825161132628-ufpsv7fnbei38jpea8s517o28s2h76fk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOopoxX3OM4Bbdb7wfbHb6cJ37GT43SUk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "825161132628-ufpsv7fnbei38jpea8s517o28s2h76fk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
