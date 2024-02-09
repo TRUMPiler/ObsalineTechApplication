@@ -8,9 +8,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.firebase.database.DatabaseReference;
+
 public class MainActivity extends AppCompatActivity {
     EditText productID;
     Button Submit;
+    DatabaseReference df;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private void ButtonClick() {
         Submit.setOnClickListener(new View.OnClickListener() {
             @Override
+
             public void onClick(View v) {
                 Intent i=new Intent(getApplicationContext(), IotData.class);
                 i.putExtra("ID",Integer.parseInt(productID.getText().toString()));
