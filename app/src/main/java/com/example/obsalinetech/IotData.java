@@ -2,8 +2,20 @@ package com.example.obsalinetech;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,12 +34,21 @@ Button Submit;
 int ID;
 double Store;
    DatabaseReference databaseReference;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_iot_data);
         Intent i=getIntent();
         ID= i.getIntExtra("ID",0);
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.TIRAMISU)
+        {
+            if(ContextCompat.checkSelfPermission(IotData.this, Manifest.permission.POST_NOTIFICATIONS)!= PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(IotData.this,new String[]{Manifest.permission.POST_NOTIFICATIONS},101);
+            }
+        }
         Initialization();
         databaseReference.child("/Firebase22").child("/ivd-"+ID+"/weight").addValueEventListener(new ValueEventListener() {
             @Override
@@ -41,12 +62,17 @@ double Store;
                         Store=Double.parseDouble(Text);
                     }
                 });
-                if((Double.parseDouble(Text))/Store*100==90)
+                if((Double.parseDouble(Text))/Store*100==10)
                 {
-                    Toast.makeText(getApplicationContext(), "90% reached", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "10% reached", Toast.LENGTH_LONG).show();
+                    Notification("bottle at Critical level","IV has reached at 10%");
+                }
+                if((Double.parseDouble(Text))/Store*100==20)
+                {
+                    Toast.makeText(getApplicationContext(), "20% reached", Toast.LENGTH_LONG).show();
+                    Notification("bottle at Critical level","IV has reached at `20%");
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error)
             {
@@ -61,6 +87,39 @@ double Store;
         Submit=findViewById(R.id.Submit);
         data=findViewById(R.id.lblData);
         databaseReference = FirebaseDatabase.getInstance("https://ivd-1-f15ba-default-rtdb.firebaseio.com/").getReference();
+        Activate();
+    }
 
+    private void Activate() {
+        databaseReference.child("/Firebase22").child("/ivd-"+ID+"/activate").setValue(true);
+    }
+
+    public void Notification(String Title,String Text)
+    {
+        String Channelid="CHANNEL_ID_NOTIFICATION";
+        NotificationCompat.Builder builder=new NotificationCompat.Builder(getApplicationContext(),Channelid);
+        builder.setSmallIcon(R.drawable.notificationbell);
+        builder.setContentTitle(Title);
+        builder.setContentText(Text);
+        builder.setAutoCancel(true).setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        Intent i=new Intent(getApplicationContext(),NotificationPacket.class);
+        i.addFlags(i.FLAG_ACTIVITY_CLEAR_TOP);
+        i.putExtra("data",Text);
+        PendingIntent pi=PendingIntent.getActivity(getApplicationContext(),0,i,PendingIntent.FLAG_IMMUTABLE);
+        builder.setContentIntent(pi);
+        NotificationManager nm=(NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel nc=nm.getNotificationChannel(Channelid);
+            if(nc==null)
+            {
+                int importance=NotificationManager.IMPORTANCE_HIGH;
+                nc=new NotificationChannel(Channelid,"GG",importance);
+                nc.setLightColor(Color.GREEN);
+                nc.enableVibration(true);
+                nm.createNotificationChannel(nc);
+            }
+        }
+    nm.notify(0,builder.build());
     }
 }
