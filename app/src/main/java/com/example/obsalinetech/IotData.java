@@ -56,18 +56,20 @@ double Store;
             {
                 String Text=snapshot.getValue().toString();
                 data.setText(""+Text);
+//                Toast.makeText(getApplicationContext(), ""+(Double.parseDouble(Text))/Store*100, Toast.LENGTH_LONG).show();
                 Submit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Store=Double.parseDouble(Text);
+
                     }
                 });
-                if((Double.parseDouble(Text))/Store*100==10)
+                if((Double.parseDouble(Text))/Store*100<=13&&(Double.parseDouble(Text))/Store*100>=10)
                 {
                     Toast.makeText(getApplicationContext(), "10% reached", Toast.LENGTH_LONG).show();
                     Notification("bottle at Critical level","IV has reached at 10%");
                 }
-                if((Double.parseDouble(Text))/Store*100==20)
+                if((Double.parseDouble(Text))/Store*100<=23&&(Double.parseDouble(Text))/Store*100>=20)
                 {
                     Toast.makeText(getApplicationContext(), "20% reached", Toast.LENGTH_LONG).show();
                     Notification("bottle at Critical level","IV has reached at `20%");
