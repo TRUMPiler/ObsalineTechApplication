@@ -13,6 +13,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -22,20 +23,25 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class IotData extends AppCompatActivity {
 TextView data;
-Button Submit;
+FirebaseFirestore fb;
+Button Submit,Forget,Transfer;
 int ID;
 double Store;
    DatabaseReference databaseReference;
-
-
+    SharedPreferences sp;
+    SharedPreferences sp1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +67,25 @@ double Store;
                     @Override
                     public void onClick(View v) {
                         Store=Double.parseDouble(Text);
+                    }
 
+                });
+                Transfer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i=new Intent(IotData.this,Transfer.class);
+                        startActivity(i);
+                    }
+                });
+                Forget.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        SharedPreferences.Editor editor =sp.edit();
+                        editor.clear();
+                        editor.commit();
+                        Intent i=new Intent(IotData.this, MainActivity.class);
+                        startActivity(i);
                     }
                 });
                 if((Double.parseDouble(Text))/Store*100<=13&&(Double.parseDouble(Text))/Store*100>=10)
@@ -85,10 +109,16 @@ double Store;
 
     private void Initialization()
     {
+        Transfer=findViewById(R.id.Transfer);
+        fb=FirebaseFirestore.getInstance();
+        sp=getSharedPreferences("iotdata",MODE_PRIVATE);
+        sp1=getSharedPreferences("userlogin",MODE_PRIVATE);
         Store=0.0;
         Submit=findViewById(R.id.Submit);
+        Forget=findViewById(R.id.Forget);
         data=findViewById(R.id.lblData);
         databaseReference = FirebaseDatabase.getInstance("https://ivd-1-f15ba-default-rtdb.firebaseio.com/").getReference();
+        fb.collection("users").document(sp1.getString("name","Naishal")).update("ivd",String.valueOf(ID));
         Activate();
     }
 
@@ -117,7 +147,7 @@ double Store;
             {
                 int importance=NotificationManager.IMPORTANCE_HIGH;
                 nc=new NotificationChannel(Channelid,"GG",importance);
-                nc.setLightColor(Color.GREEN);
+                nc.setLightColor(Color.RED);
                 nc.enableVibration(true);
                 nm.createNotificationChannel(nc);
             }
