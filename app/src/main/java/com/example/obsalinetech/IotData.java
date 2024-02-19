@@ -67,6 +67,12 @@ double Store;
                     @Override
                     public void onClick(View v) {
                         Store=Double.parseDouble(Text);
+                        databaseReference.child("/Firebase22").child("/ivd-"+ID+"/maxvalue").setValue(Store).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(),"Failed to set the maxvalue",Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
 
                 });
